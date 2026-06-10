@@ -1,0 +1,16 @@
+version: 1
+project:
+  title: MyST Community Contributions
+  description: A landing page for the myst-contrib organization
+  github: https://github.com/myst-contrib
+  license: CC-BY-4.0
+  # These pages are generated at build time by noxfile.py, see README.md
+  toc:
+    - file: index.md
+    - file: repositories.md
+site:
+  options:
+    logo: https://raw.githubusercontent.com/jupyter-book/mystmd.org/main/theme/app/components/logo-wide.svg
+    logo_dark: https://raw.githubusercontent.com/jupyter-book/mystmd.org/main/theme/app/components/logo-wide-dark.svg
+    logo_text: Community Contributions
+  template: book-theme
