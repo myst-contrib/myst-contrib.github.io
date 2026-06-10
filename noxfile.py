@@ -24,7 +24,14 @@ def fetch_pages():
     urlretrieve(README_URL, "docs/index.md")
 
     listing = subprocess.run(
-        ["gh", "repo", "list", "myst-contrib", "--json", "name,description,url"],
+        [
+            "gh",
+            "repo",
+            "list",
+            "myst-contrib",
+            "--json",
+            "name,description,url,homepageUrl",
+        ],
         check=True,
         capture_output=True,
         text=True,
@@ -37,8 +44,9 @@ def fetch_pages():
         "",
     ]
     for repo in sorted(repos, key=lambda r: r["name"].lower()):
+        docs_link = f" ([docs]({repo['homepageUrl']}))" if repo["homepageUrl"] else ""
         description = f" - {repo['description']}" if repo["description"] else ""
-        lines.append(f"- [{repo['name']}]({repo['url']}){description}")
+        lines.append(f"- [{repo['name']}]({repo['url']}){docs_link}{description}")
     Path("docs/repositories.md").write_text("\n".join(lines) + "\n")
 
 
