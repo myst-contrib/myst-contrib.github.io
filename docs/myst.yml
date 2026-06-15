@@ -13,4 +13,5 @@ site:
     logo: https://raw.githubusercontent.com/jupyter-book/mystmd.org/main/theme/app/components/logo-wide.svg
     logo_dark: https://raw.githubusercontent.com/jupyter-book/mystmd.org/main/theme/app/components/logo-wide-dark.svg
     logo_text: Community Contributions
+    internal_domains: https://contrib.mystmd.org/
   template: book-theme
