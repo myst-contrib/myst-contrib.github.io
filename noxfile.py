@@ -52,10 +52,10 @@ def fetch_pages():
         lines.append(
             f"| [{repo['name']}]({repo['url']}) "
             f"| {repo['description'] or ''} "
+            f"| {docs} "
             f"| {topics} "
             f"| {repo['stargazerCount']} "
-            f"| {repo['updatedAt'][:10]} "
-            f"| {docs} |"
+            f"| {repo['updatedAt'][:10]} |"
         )
     Path("docs/repositories.md").write_text("\n".join(lines) + "\n")
 
