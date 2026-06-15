@@ -1,0 +1,12 @@
+# Shared footer for myst-contrib sites.
+# Other contrib sites reuse it by adding to their myst.yml:
+#
+#   extends:
+#     - https://raw.githubusercontent.com/myst-contrib/myst-contrib.github.io/main/footer.yml
+#
+# Content is inline (not a file path) so it works when extended remotely.
+version: 1
+site:
+  parts:
+    footer: |
+      Part of [MyST Community Contributions](https://contrib.mystmd.org) - community plugins, themes, and templates for the [MyST Document Engine](https://mystmd.org).

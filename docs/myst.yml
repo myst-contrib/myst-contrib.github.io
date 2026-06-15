@@ -1,4 +1,6 @@
 version: 1
+extends:
+  - footer.yml
 project:
   title: MyST Community Contributions
   description: A landing page for the myst-contrib organization
