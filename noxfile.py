@@ -30,23 +30,33 @@ def fetch_pages():
             "list",
             "myst-contrib",
             "--json",
-            "name,description,url,homepageUrl",
+            "name,description,url,homepageUrl,repositoryTopics,stargazerCount,updatedAt",
         ],
         check=True,
         capture_output=True,
         text=True,
     )
     repos = [r for r in json.loads(listing.stdout) if r["name"] not in EXCLUDED_REPOS]
+
     lines = [
         "# Repositories",
         "",
         "The repositories in the [myst-contrib organization](https://github.com/orgs/myst-contrib/repositories).",
         "",
+        "| Repository | Description | Topics | ★ | Updated | Docs |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for repo in sorted(repos, key=lambda r: r["name"].lower()):
-        docs_link = f" ([docs]({repo['homepageUrl']}))" if repo["homepageUrl"] else ""
-        description = f" - {repo['description']}" if repo["description"] else ""
-        lines.append(f"- [{repo['name']}]({repo['url']}){docs_link}{description}")
+        topics = ", ".join(t["name"] for t in repo["repositoryTopics"] or [])
+        docs = f"[docs]({repo['homepageUrl']})" if repo["homepageUrl"] else ""
+        lines.append(
+            f"| [{repo['name']}]({repo['url']}) "
+            f"| {repo['description'] or ''} "
+            f"| {topics} "
+            f"| {repo['stargazerCount']} "
+            f"| {repo['updatedAt'][:10]} "
+            f"| {docs} |"
+        )
     Path("docs/repositories.md").write_text("\n".join(lines) + "\n")
 
 
