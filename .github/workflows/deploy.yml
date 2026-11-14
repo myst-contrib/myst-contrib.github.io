@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Rebuild daily so updates to the org README flow through
+    # Rebuild daily so the site picks up changes to the org README and repositories
     - cron: '0 8 * * *'
 
 permissions:

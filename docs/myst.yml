@@ -9,7 +9,7 @@ project:
   plugins:
     # Lists the repos in repos.json
     - https://github.com/myst-contrib/myst-listing/releases/latest/download/plugin.mjs
-  # index.md and repos.json are generated at build time by noxfile.py, see README.md
+  # noxfile.py generates index.md and repos.json at build time. See README.md.
   toc:
     - file: index.md
     - file: repositories.md

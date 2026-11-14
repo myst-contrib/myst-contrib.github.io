@@ -34,7 +34,7 @@ See [all repositories](repositories.md) for more details.
 
 
 def fetch_pages():
-    """Fetch / generate the site's pages: the org README and the repository list."""
+    """Write docs/index.md from the org README and docs/repos.json from the org's repositories."""
     readme = urlopen(README_URL).read().decode()
 
     listing = subprocess.run(
