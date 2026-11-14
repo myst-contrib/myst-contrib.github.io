@@ -3,7 +3,7 @@
 import json
 import subprocess
 from pathlib import Path
-from urllib.request import urlretrieve
+from urllib.request import urlopen
 
 import nox
 
@@ -18,10 +18,24 @@ README_URL = (
 # Utility repositories that aren't community projects
 EXCLUDED_REPOS = {".github", "myst-contrib.github.io"}
 
+# Inserted into the README after its intro
+PROJECTS_SECTION = """## Projects
+
+:::{listing}
+:source: json
+:path: repos.json
+:display: list
+:sort: updated-desc
+:limit: 0
+:::
+
+See [all repositories](repositories.md) for more details.
+"""
+
 
 def fetch_pages():
     """Fetch / generate the site's pages: the org README and the repository list."""
-    urlretrieve(README_URL, "docs/index.md")
+    readme = urlopen(README_URL).read().decode()
 
     listing = subprocess.run(
         [
@@ -30,34 +44,31 @@ def fetch_pages():
             "list",
             "myst-contrib",
             "--json",
-            "name,description,url,homepageUrl,repositoryTopics,stargazerCount,updatedAt",
+            "name,description,url,homepageUrl,repositoryTopics,stargazerCount,pushedAt",
         ],
         check=True,
         capture_output=True,
         text=True,
     )
-    repos = [r for r in json.loads(listing.stdout) if r["name"] not in EXCLUDED_REPOS]
-
-    lines = [
-        "# Repositories",
-        "",
-        "The repositories in the [myst-contrib organization](https://github.com/orgs/myst-contrib/repositories).",
-        "",
-        "| Repository | Description | Topics | ★ | Updated | Docs |",
-        "| --- | --- | --- | --- | --- | --- |",
+    # Items for the myst-listing plugin, used by index.md and repositories.md
+    items = [
+        {
+            "title": r["name"],
+            # Many homepages are set as http://, which skips internal_domains matching
+            "url": (r["homepageUrl"] or r["url"]).replace("http://", "https://", 1),
+            "description": r["description"],
+            "tags": [t["name"] for t in r["repositoryTopics"] or []],
+            "stars": r["stargazerCount"],
+            "updated": r["pushedAt"][:10],
+        }
+        for r in json.loads(listing.stdout)
+        if r["name"] not in EXCLUDED_REPOS
     ]
-    for repo in sorted(repos, key=lambda r: r["name"].lower()):
-        topics = ", ".join(t["name"] for t in repo["repositoryTopics"] or [])
-        docs = f"[docs]({repo['homepageUrl']})" if repo["homepageUrl"] else ""
-        lines.append(
-            f"| [{repo['name']}]({repo['url']}) "
-            f"| {repo['description'] or ''} "
-            f"| {docs} "
-            f"| {topics} "
-            f"| {repo['stargazerCount']} "
-            f"| {repo['updatedAt'][:10]} |"
-        )
-    Path("docs/repositories.md").write_text("\n".join(lines) + "\n")
+    Path("docs/repos.json").write_text(json.dumps(items, indent=2))
+
+    # Landing page: the README intro, then the project list, then the rest of the README
+    intro, sep, rest = readme.partition("\n## ")
+    Path("docs/index.md").write_text(intro + "\n" + PROJECTS_SECTION + sep + rest)
 
 
 @nox.session(name="docs")
@@ -70,6 +81,7 @@ def docs(session):
 
 
 @nox.session(name="docs-live")
+@nox.session(name="docs:live")
 def docs_live(session):
     """Start a live development server for the documentation."""
     fetch_pages()

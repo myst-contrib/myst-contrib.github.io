@@ -6,7 +6,10 @@ project:
   description: A landing page for the myst-contrib organization
   github: https://github.com/myst-contrib
   license: CC-BY-4.0
-  # These pages are generated at build time by noxfile.py, see README.md
+  plugins:
+    # Lists the repos in repos.json
+    - https://github.com/myst-contrib/myst-listing/releases/latest/download/plugin.mjs
+  # index.md and repos.json are generated at build time by noxfile.py, see README.md
   toc:
     - file: index.md
     - file: repositories.md
